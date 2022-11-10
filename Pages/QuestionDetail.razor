@@ -1,0 +1,45 @@
+﻿@page "/Question/{id}"
+@using Microsoft.EntityFrameworkCore;
+@using QuestionBox.Data;
+@inject NavigationManager NavigationManager
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+@functions {
+    public void NevagateTo(string url)
+    {
+        NavigationManager.NavigateTo($"/Answer/{url}");
+    }
+}
+<div class="flex mt-20 flex-col space-y-8">
+
+    <div class="flex table-auto rounded-t-xl  shadow-md h-32">
+        <span class="text-center subpixel-antialiased mx-auto my-auto">@questions.Questions</span>
+    </div>
+    <AuthorizeView>
+        <Authorized>
+            <button @onclick="()=>NevagateTo(id)"></button>
+        </Authorized>
+    </AuthorizeView>
+    <div class="flex table-auto rounded-t-xl shadow-md h-32">
+        <span class="text-center subpixel-antialiased mx-10 my-auto">@questions.Answers</span>
+    </div>
+
+</div>
+
+
+
+@code {
+    QuestionModel questions;
+    [Parameter]
+    public string id { get; set; }
+    public async Task<QuestionModel> GetQuestionListAsync()
+    {
+        using var _context = await DbFactory.CreateDbContextAsync();
+        return await _context.DataModel.FindAsync(Guid.Parse(id));
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        questions = await GetQuestionListAsync();
+        await base.OnInitializedAsync();
+    }
+}

@@ -1,0 +1,63 @@
+﻿@page "/ask-new"
+@using Microsoft.EntityFrameworkCore;
+@using QuestionBox.Data;
+@using System.ComponentModel.DataAnnotations;
+@inject NavigationManager NavigationManager
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<EditForm Model="model" OnValidSubmit="@OnPostAsync" class="flex flex-col mt-20 mx-auto space-y-16">
+    <DataAnnotationsValidator />
+    <div class="w-100">
+        <ValidationSummary />
+        @if (isSuccess)
+        {
+            <div class="alert alert-success" role="alert">提问成功</div>
+        }
+        <InputTextArea class="rounded-2xl border-2 border-slate-300 w-100 h-48" @bind-Value="model.question"></InputTextArea>
+    </div>
+    <button class="rounded-xl w-1/3 btn-primary mx-auto h-16" type="submit">提问</button>
+</EditForm>
+
+
+
+@code {
+    public class EditModels
+    {
+        [Required(ErrorMessage = "问题不能为空")]
+        public string question { get; set; }
+    }
+
+    public EditModels? model;
+    public bool isSuccess = false;
+
+
+    protected override void OnInitialized()
+    {
+        model = new EditModels();
+        base.OnInitialized();
+    }
+
+
+    public async Task OnPostAsync()
+    {
+
+        using var context = await DbFactory.CreateDbContextAsync();
+
+        var gid = Guid.NewGuid();
+
+        var data = new QuestionModel(gid, model.question, "");
+        context.DataModel?.Add(data);
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            throw;
+        }
+        model = new EditModels();
+        isSuccess = true;
+        Thread.Sleep(2000);
+        NavigationManager.NavigateTo("/");
+    }
+}

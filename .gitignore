@@ -1,31 +1,12 @@
-# Logs
-QuestionBox-frontend/logs
-QuestionBox-frontend/*.log
-QuestionBox-frontend/npm-debug.log*
-QuestionBox-frontend/yarn-debug.log*
-QuestionBox-frontend/yarn-error.log*
-QuestionBox-frontend/pnpm-debug.log*
-QuestionBox-frontend/lerna-debug.log*
 
-
-QuestionBox-frontend/node_modules
-QuestionBox-frontend/dist
-QuestionBox-frontend/dist-ssr
-QuestionBox-frontend/*.local
-QuestionBox-backend/.vs
-QuestionBox-backend/bin
-QuestionBox-backend/obj
-QuestionBox-backend/Properties
+node_modules
+*.local
+.vs
+bin
+obj
+Properties
+.configs
 
 # Editor directories and files
-QuestionBox-frontend/.vscode/*
-QuestionBox-frontend/!.vscode/extensions.json
-QuestionBox-frontend/.idea
-QuestionBox-frontend/.DS_Store
-QuestionBox-frontend/*.suo
-QuestionBox-frontend/*.ntvs*
-QuestionBox-frontend/*.njsproj
-QuestionBox-frontend/*.sln
-QuestionBox-frontend/*.sw?
-QuestionBox-backend/appsettings.json
-QuestionBox-backend/data.db
+.DS_Store
+app.db

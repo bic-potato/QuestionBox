@@ -1,0 +1,56 @@
+﻿@page "/"
+@using Microsoft.EntityFrameworkCore;
+@using QuestionBox.Data;
+@inject NavigationManager NavigationManager
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+@{
+    string newask = "ask-new";
+}
+
+<div class="flex text-center text-lg text-white bg-indigo-500 opacity-75 mt-40 mx-auto h-40 rounded-2xl align-baseline"
+     @onclick="()=>NavigationManager.NavigateTo(newask)">
+    <span class="antialiased text-center mx-auto my-auto align-middle">欲买桂花同载酒</span>
+</div>
+
+@functions{
+    public void ToQuestion(string url)
+    {
+        NavigationManager.NavigateTo($"Question/{url}");
+    }
+}
+
+    @foreach (var question in questions)
+    {
+
+    <div class="flex flex-col my-20 h-60 shadow-md w-100"
+     @onclick="()=>ToQuestion(question.uid.ToString())">
+        <div class="flex text-center bg-slate-50 mx-auto mt-3 mb-3 w-11/12 h-2/5 ">
+            <span class="text-center text-slate-400 text-base subpixel-antialiased my-auto mx-auto align-middle">@question.Questions</span>
+            </div>
+        <div class="flex text-ellipsis overflow-hidden mt-3 align-middle w-11/12">
+            <span class="my-auto align-middle mx-10">@question.Answers</span>
+            </div>
+        </div>
+
+
+    }
+
+
+@code {
+    IEnumerable<QuestionModel> questions; 
+    public async Task<IEnumerable<QuestionModel>> GetQuestionListAsync()
+    {
+        using var _context = await DbFactory.CreateDbContextAsync();
+        return await _context.DataModel.Where(e=>e.Answers != "").ToListAsync();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        questions = await GetQuestionListAsync();
+        await base.OnInitializedAsync();
+    }
+
+
+}

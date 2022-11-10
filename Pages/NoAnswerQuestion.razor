@@ -1,0 +1,56 @@
+﻿
+@page "/no-answer"
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore;
+@using QuestionBox.Data;
+@inject NavigationManager NavigationManager
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject SignInManager<IdentityUser> SignInManager
+@functions{
+    public void ToQuestion(string url)
+    {
+        NavigationManager.NavigateTo($"Answer/{url}");
+    }
+}
+<AuthorizeView>
+    <Authorized>
+        <div class="grid gap-2 my-20 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        @foreach (var question in questions)
+        {
+
+                <div class="my-20 w-40 h-80 bg-green-200 rounded-md"
+         @onclick="()=>ToQuestion(question.uid.ToString())">
+                    <div class="m-4 text-white subpixel-antialiased text-lg">
+                    @question.Questions
+                </div>
+            </div>
+
+
+        }
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <p>你尚未登录，正在跳转中</p>
+        @{
+            NavigationManager.NavigateTo("Identity/Account/Login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+        IEnumerable<QuestionModel> questions;
+        public async Task<IEnumerable<QuestionModel>> GetQuestionListAsync()
+        {
+            using var _context = await DbFactory.CreateDbContextAsync();
+            return await _context.DataModel.Where(e=>e.Answers=="").ToListAsync();
+        }
+    protected override async Task OnInitializedAsync()
+    {
+
+            questions = await GetQuestionListAsync();
+            await base.OnInitializedAsync();
+
+    }
+
+}
